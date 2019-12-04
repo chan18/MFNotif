@@ -14,7 +14,6 @@ var apiRoutes = require('./routes/api');
 // import server config
 var config = require('./config')
 
-//console.log(config.setup.DatabaseUrl);
 
 // for debugging
 process.on('unhandledRejection', (reason, p) => {
@@ -30,9 +29,11 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
+app.use('/api',apiRoutes);
+
 //  on " / " send index, config index page
 app.get('/', (req, res) => {
-    res.send("index page")
+    res.send("index page");
 });
 
 // boot the app
