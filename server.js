@@ -14,6 +14,7 @@ var apiRoutes = require('./routes/api');
 // import server config
 var config = require('./config')
 
+//console.log(config.setup.DatabaseUrl);
 
 // for debugging
 process.on('unhandledRejection', (reason, p) => {

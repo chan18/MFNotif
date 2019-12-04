@@ -1,10 +1,14 @@
-// server configuration file.
 
-// for mail service.
-SendGridKey = ""
 
-// for sms service.
-twilioKey = ""
+exports.setup = {
+  // server configuration file.
+  // for mail service.
+  "SendGridKey" : "",
 
-// database
-DatabaseUrl = ""
+  // for sms service.
+  "twilioKey" : "",
+
+  // database
+  "DatabaseUrl" : "test"
+}
+
