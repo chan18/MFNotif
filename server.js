@@ -21,15 +21,19 @@ process.on('unhandledRejection', (reason, p) => {
 });
 
 // setup the port.
-var port =  47112;
+var port = 5000;
 
 // configure express app.
 app.use(bodyParser.json());
-app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({
+    type: 'application/vnd.api+json'
+}));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 app.use(express.static(__dirname + '/public'));
 
-app.use('/api',apiRoutes);
+app.use('/api', apiRoutes);
 
 //  on " / " send index, config index page
 app.get('/', (req, res) => {

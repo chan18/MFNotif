@@ -1,13 +1,15 @@
 exports.setup = {
   // server configuration file.
   // for mail service.
-  "SendGridKey" : "",
+  "SendGridKey": "",
+
+  "mailFrom": "MFNotif@MF.com",
 
   // for sms service.
-  "twilioKey" : "",
+  "twilioKey": "",
 
   // database
-  "Database" : {
+  "Database": {
     "url": "mongodb://127.0.0.1:27017",
     // local setup of mongo db that installed have no passowrd or user.
     // depending on deployment things need to be configured.
@@ -15,4 +17,3 @@ exports.setup = {
     "password": ""
   }
 }
-
