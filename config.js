@@ -5,6 +5,11 @@ exports.setup = {
 
   "mailFrom": "MFNotif@MF.com",
 
+  "twilio": {
+    "accountSid": "",
+    "authToken": ""
+  },
+
   // for sms service.
   "twilioKey": "",
 

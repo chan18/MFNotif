@@ -1,8 +1,8 @@
 var express = require('express');
-var mongoose = require('../mongooseConnection');
 var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
 var config = require('../config')
+var mongoose = require('../mongooseConnection');
 const mailer = require('@sendgrid/mail');
 
 mailer.setApiKey(config.setup.SendGridKey);
@@ -26,9 +26,25 @@ router.get('/testmail', function (req, res) {
     html: '<strong>and easy to do anywhere, even with Node.js TEST</strong>',
   };
 
-  res.json(mail(msg).then((data) => {
-    return data
-  }));
+  mail(msg).then((data) => {
+    res.json(data);
+  });
+
+});
+
+// ------------------- send sms -----------------
+router.get('/testsms', function (req, res) {
+
+  msg = {
+    from: "+12029183903",
+    to: "+916301411240",
+    body: "You just sent an SMS from Node.js using Twilio!"
+  };
+
+
+  sms(msg).then((data) => {
+    res.json(data);
+  });
 
 });
 
@@ -45,7 +61,7 @@ router.get('/get_token', (req, res) => {
   jwt.sign({
     user
   }, 'secretkey', {
-    expiresIn: '30s'
+    expiresIn: '60s'
   }, (err, token) => {
     res.json({
       token
@@ -54,24 +70,22 @@ router.get('/get_token', (req, res) => {
 
 });
 
-
 // -------------------- orders --------------------
-router.get('/orders', auth, (req, res) => {
+router.use('/orders', auth, (req, res) => {
 
   jwt.verify(req.token, 'secretkey', (error, data) => {
     if (error) {
       //console.log("error", error);
-      res.sendStatus(403)
+      res.sendStatus(403);
     } else {
-      res.json({
-        status: "ok",
-        data
-      });
+      // res.json({
+      //   status: "ok",
+      //   data
+      // });
     }
   });
 
 });
-
 
 // -------------------- inventory --------------------
 router.get('/inventory', (req, res) => {
@@ -96,7 +110,6 @@ function auth(req, res, next) {
 }
 
 // --------------------- send mail ---------------------------
-
 function mail(msg) {
   return mailer.send(msg).then(() => {
     return {
@@ -111,6 +124,22 @@ function mail(msg) {
 }
 
 // ---------------------- send sms ---------------------------
+function sms(msg) {
+
+  const twilioClient = require('twilio')(config.setup.twilio.accountSid, config.setup.twilio.authToken);
+  return twilioClient.messages.create(msg).then((message) => {
+    return {
+      "msg": "sms sent",
+      message
+    };
+  }).catch((error) => {
+    return {
+      'msg': 'There was an error sending sms',
+      'error': error
+    }
+  });
+
+}
 
 // export the api-middleware
 module.exports = router;

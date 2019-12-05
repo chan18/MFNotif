@@ -12,8 +12,7 @@ var app = express();
 var apiRoutes = require('./routes/api');
 
 // import server config
-var config = require('./config')
-
+var config = require('./config');
 
 // for debugging
 process.on('unhandledRejection', (reason, p) => {
