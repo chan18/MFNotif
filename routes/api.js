@@ -1,7 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
-var config = require('../config')
+var config = require('../config');
 var mongoose = require('../mongooseConnection');
 var smsService = require('../service/smsService');
 var mailService = require('../service/mailService');
@@ -21,7 +21,7 @@ router.use('/seller/:sellerId/products/:productId/orders', [auth,
 
 router.use(bodyParser.json());
 
-// ------------------- send mail -----------------
+// ------------------- test send mail -----------------
 router.get('/testmail', function (req, res) {
 
   const msg = {
@@ -38,7 +38,7 @@ router.get('/testmail', function (req, res) {
 
 });
 
-// ------------------- send sms -----------------
+// ------------------- test send sms -----------------
 router.get('/testsms', function (req, res) {
   msg = {
     from: config.setup.twilio.from,
@@ -73,7 +73,7 @@ router.get('/get_token', (req, res) => {
 
 });
 
-// -------------------- orders --------------------
+// -------------------- test orders --------------------
 router.use('/orders', auth, (req, res) => {
 
   jwt.verify(req.token, 'secretkey', (error, data) => {
@@ -93,7 +93,7 @@ router.use('/orders', auth, (req, res) => {
 
 });
 
-// -------------------- inventory --------------------
+// -------------------- test inventory --------------------
 router.get('/inventory', (req, res) => {
   res.send("inventory");
 });

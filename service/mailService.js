@@ -6,9 +6,10 @@ mailer.setApiKey(config.setup.SendGridKey);
 
 // --------------------- send mail ---------------------------
 function mail(msg) {
-    return mailer.send(msg).then(() => {
+    return mailer.send(msg).then((data) => {
         return {
-            'msg': 'Email has been sent!'
+            'msg': 'Email has been sent!',
+            "data": data
         };
     }).catch((error) => {
         return {
