@@ -3,15 +3,21 @@ var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
 var config = require('../config')
 var mongoose = require('../mongooseConnection');
-const mailer = require('@sendgrid/mail');
-
-mailer.setApiKey(config.setup.SendGridKey);
+var smsService = require('../service/smsService');
+var mailService = require('../service/mailService');
+var ordersRoutes = require('./ordersApi');
 
 // import express router middleware. and config
 var router = express.Router();
+
 router.use(bodyParser.urlencoded({
   extended: true
 }));
+
+// seller/:sellerId/products/:productId/order?event="eventType"
+router.use('/seller/:sellerId/products/:productId/orders', [auth,
+  verifyToken
+], ordersRoutes);
 
 router.use(bodyParser.json());
 
@@ -19,14 +25,14 @@ router.use(bodyParser.json());
 router.get('/testmail', function (req, res) {
 
   const msg = {
-    to: 'ChandrakanthP@kavayahsolutions.com',
+    to: config.setup.mailTo,
     from: config.setup.mailFrom,
     subject: 'Sending with Twilio SendGrid is Fun',
     text: 'and easy to do anywhere, even with Node.js',
     html: '<strong>and easy to do anywhere, even with Node.js TEST</strong>',
   };
 
-  mail(msg).then((data) => {
+  mailService(msg).then((data) => {
     res.json(data);
   });
 
@@ -34,18 +40,15 @@ router.get('/testmail', function (req, res) {
 
 // ------------------- send sms -----------------
 router.get('/testsms', function (req, res) {
-
   msg = {
-    from: "+12029183903",
-    to: "+916301411240",
+    from: config.setup.twilio.from,
+    to: config.setup.twilio.to,
     body: "You just sent an SMS from Node.js using Twilio!"
   };
 
-
-  sms(msg).then((data) => {
+  smsService(msg).then((data) => {
     res.json(data);
   });
-
 });
 
 // ---------------- get token --------------
@@ -75,13 +78,16 @@ router.use('/orders', auth, (req, res) => {
 
   jwt.verify(req.token, 'secretkey', (error, data) => {
     if (error) {
-      //console.log("error", error);
-      res.sendStatus(403);
+      console.log("error", error);
+      res.status(403).json({
+        "message": error.message,
+        "name": error.name
+      });
     } else {
-      // res.json({
-      //   status: "ok",
-      //   data
-      // });
+      res.json({
+        status: "ok",
+        data
+      });
     }
   });
 
@@ -94,7 +100,6 @@ router.get('/inventory', (req, res) => {
 
 // ---------------------- auth middleware ---------------------
 function auth(req, res, next) {
-
   // get auth header value
   const bearerHeader = req.headers['auth'];
 
@@ -109,36 +114,18 @@ function auth(req, res, next) {
 
 }
 
-// --------------------- send mail ---------------------------
-function mail(msg) {
-  return mailer.send(msg).then(() => {
-    return {
-      'msg': 'Email has been sent!'
-    };
-  }).catch((error) => {
-    return {
-      'msg': 'There was an error sending the email',
-      'error': error
-    };
-  });
-}
-
-// ---------------------- send sms ---------------------------
-function sms(msg) {
-
-  const twilioClient = require('twilio')(config.setup.twilio.accountSid, config.setup.twilio.authToken);
-  return twilioClient.messages.create(msg).then((message) => {
-    return {
-      "msg": "sms sent",
-      message
-    };
-  }).catch((error) => {
-    return {
-      'msg': 'There was an error sending sms',
-      'error': error
+function verifyToken(req, res, next) {
+  jwt.verify(req.token, 'secretkey', (error, data) => {
+    if (error) {
+      console.log("error", error);
+      res.status(403).json({
+        "message": error.message,
+        "name": error.name
+      });
+    } else {
+      next();
     }
   });
-
 }
 
 // export the api-middleware
