@@ -86,12 +86,12 @@ function buildMessage(req, res, mailData, smsData) {
 
     }
 
-    if (req.query.event.toUpperCase() === "CANCELLED") {
+    if (req.query.event.toUpperCase() === "DELIVERED") {
 
-        mailData["text"] = "order has been cancelled ";
-        mailData["html"] = "order has been <b>cancelled </b>";
+        mailData["text"] = "order has been delivered ";
+        mailData["html"] = "order has been <b>delivered </b>";
         // sms
-        smsData["body"] = "Order has been cancelled ";
+        smsData["body"] = "Order has been delivered ";
 
         return {
             mail: mailData,

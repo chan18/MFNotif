@@ -52,7 +52,7 @@ router.get('/testsms', function (req, res) {
 });
 
 // ---------------- get token --------------
-router.get('/get_token', (req, res) => {
+router.get('/token', (req, res) => {
 
   // Mock user
   const user = {
